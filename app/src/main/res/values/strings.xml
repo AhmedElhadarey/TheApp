@@ -13,12 +13,14 @@
     <string name="usr_name_hint">Name</string>
     <string name="email_validation_error">please enter a valid email</string>
     <string name="user_name_validation_error">please enter valid name . i.e enter name with at least 3 chars</string>
-    <string name="password_validation_error">please enter valid password . i.e password between 4 to 10 alphanumeric characters</string>
+    <string name="password_validation_error">please enter valid password . i.e password between should be more than 6 chars</string>
     <string name="Login_failure_message">Login failed</string>
     <string name="login_progress_message">Authenticating...</string>
     <string name="title_activity_maps">Map</string>
     <string name="stop_btn_message">STOP</string>
     <string name="start_btn_message">START</string>
+    <string name="trip_info_message">Getting trip information</string>
+
 
 
 </resources>
