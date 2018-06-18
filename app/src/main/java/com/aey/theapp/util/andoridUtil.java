@@ -58,8 +58,6 @@ public class andoridUtil {
         return Time;
     }
 
-
-
     public static double ParseGoogleDirectionDistance(String Result) throws JSONException {
 
 

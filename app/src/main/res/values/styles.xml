@@ -37,5 +37,11 @@
         <item name="android:background">@color/primary</item>
     </style>
 
+    <style name="FullScreenDialogStyle" parent="AlertDialog.AppCompat">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:background">#fafafa</item>
+    </style>
 
 </resources>

@@ -31,12 +31,16 @@ public class SignupActivity extends AppCompatActivity {
     private FirebaseAuth.AuthStateListener firebaseAuthListener;
 
 
-
-    @BindView(R.id.input_name) EditText _nameText;
-    @BindView(R.id.input_email) EditText _emailText;
-    @BindView(R.id.input_password) EditText _passwordText;
-    @BindView(R.id.btn_signup) Button _signupButton;
-    @BindView(R.id.link_login) TextView _loginLink;
+    @BindView(R.id.input_name)
+    EditText _nameText;
+    @BindView(R.id.input_email)
+    EditText _emailText;
+    @BindView(R.id.input_password)
+    EditText _passwordText;
+    @BindView(R.id.btn_signup)
+    Button _signupButton;
+    @BindView(R.id.link_login)
+    TextView _loginLink;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,15 +49,13 @@ public class SignupActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
 
-
-
         firebaseAuth = FirebaseAuth.getInstance();
 
         firebaseAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                if(user!=null){
+                if (user != null) {
                     Intent intent = new Intent(SignupActivity.this, MapsActivity.class);
                     startActivity(intent);
                     onSignupSuccess();
@@ -89,8 +91,7 @@ public class SignupActivity extends AppCompatActivity {
 
         _signupButton.setEnabled(false);
 
-        final ProgressDialog progressDialog = new ProgressDialog(SignupActivity.this,
-                R.style.AppTheme_Dark_Dialog);
+        final ProgressDialog progressDialog = new ProgressDialog(SignupActivity.this, R.style.AppTheme_Dark_Dialog);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Creating Account...");
         progressDialog.show();
@@ -101,20 +102,10 @@ public class SignupActivity extends AppCompatActivity {
 
         // TODO: Implement your own signup logic here.
 
-        createAccount(email,password);
+        createAccount(email, password);
         progressDialog.dismiss();
 
-                    }
-
-
-
-
-
-
-
-
-
-
+    }
 
 
     public void onSignupSuccess() {
@@ -167,10 +158,10 @@ public class SignupActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
 
-                if(!task.isSuccessful()){
+                if (!task.isSuccessful()) {
                     Toast.makeText(SignupActivity.this, "sign up error", Toast.LENGTH_SHORT).show();
                     onSignupFailed();
-                }else{
+                } else {
                     String user_id = firebaseAuth.getCurrentUser().getUid();
                     DatabaseReference current_user_db = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(user_id);
                     current_user_db.setValue(true);

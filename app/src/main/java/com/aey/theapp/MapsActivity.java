@@ -1,5 +1,6 @@
 package com.aey.theapp;
 
+import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
@@ -9,7 +10,6 @@ import android.os.Looper;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
@@ -73,8 +73,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
         }
@@ -121,8 +120,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Permission plaplapla
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                    ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
             } else {
                 checkLocationPermission();
@@ -143,6 +141,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @OnClick(R.id.btn_start)
     public void TripBtnController() {
 
+//        FullScreenDialog dialog = new FullScreenDialog();
+//        dialog.setJsonResponse(response);
+//        FragmentTransaction ft = getFragmentManager().beginTransaction();
+//        dialog.show(ft, FullScreenDialog.TAG);
+
         // check if app in not on a trip change btn text to stop and start tip
         if (!isInTrip) {
 
@@ -159,8 +162,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             // show fake progress :D :D to get trip info
 
 
-            final ProgressDialog progressDialog = new ProgressDialog(MapsActivity.this,
-                    R.style.AppTheme_Dark_Dialog);
+            final ProgressDialog progressDialog = new ProgressDialog(MapsActivity.this, R.style.AppTheme_Dark_Dialog);
 
 
             progressDialog.setIndeterminate(true);
@@ -168,32 +170,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             progressDialog.show();
 
 
-            new android.os.Handler().postDelayed(
+            new android.os.Handler().postDelayed(new Runnable() {
+                public void run() {
 
-                    new Runnable() {
-                        public void run() {
+                    // set end location to last know location as location gets updated every
+                    // LOCATION_REQUEST_INTERVAL
+                    endLocation = mLastLocation;
+                    // set Btn text to START again
+                    startBtn.setText(R.string.start_btn_message);
+                    isInTrip = false;
 
-                            // set end location to last know location as location gets updated every
-                            // LOCATION_REQUEST_INTERVAL
-                            endLocation = mLastLocation;
-                            // set Btn text to START again
-                            startBtn.setText(R.string.start_btn_message);
-                            isInTrip = false;
+                    // draw road line on map
+                    showDirection();
 
-                            // draw road line on map
-                            showDirection();
+                    // cancel fake progress
+                    progressDialog.dismiss();
 
-                            // cancel fake progress
-                            progressDialog.dismiss();
-
-                        }
-                    }, 2000);
+                }
+            }, 2000);
 
 
         }
 
     }
-
 
     private void showDirection() {
 
@@ -222,7 +221,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Log.d(TAG, "[showDirection] Trip results   " + TripDetails);
 
     }
-
 
     private void showTripDetails(String TripDetails) throws JSONException {
 
@@ -272,20 +270,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void checkLocationPermission() {
 
 
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                || ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
-                new android.app.AlertDialog.Builder(this)
-                        .setTitle("give permission")
-                        .setMessage("give permission message")
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                ActivityCompat.requestPermissions(MapsActivity.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-                            }
-                        })
-                        .create()
-                        .show();
+                new android.app.AlertDialog.Builder(this).setTitle("give permission").setMessage("give permission message").setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        ActivityCompat.requestPermissions(MapsActivity.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                    }
+                }).create().show();
             } else {
                 ActivityCompat.requestPermissions(MapsActivity.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             }
