@@ -38,6 +38,7 @@ import butterknife.OnClick;
 import static com.aey.theapp.Constant.LOCATION_REQUEST_INTERVAL;
 import static com.aey.theapp.util.andoridUtil.DirectionAPiJson;
 import static com.aey.theapp.util.andoridUtil.ParseGoogleDirectionDistance;
+import static com.aey.theapp.util.andoridUtil.ParseGoogleDirectionFare;
 import static com.aey.theapp.util.andoridUtil.ParseGoogleDirectionTime;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -256,7 +257,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Log.d(TAG, "[showTripDetails] Trip fare (Actual)  " + actualFare);
 
             // pass value to ui
+
+            ParseGoogleDirectionFare(estimateFare,actualFare);
+
             Log.d(TAG, "[showTripDetails] Trip json  " + DirectionAPiJson.toString());
+
+
+
+            new android.os.Handler().postDelayed(new Runnable() {
+                public void run() {
+
+
+                    mMap.clear();
+                }}
+                ,2000);
+
+
+
 
 
         } catch (Exception e) {

@@ -63,6 +63,10 @@ public class FullScreenDialog extends DialogFragment {
                 String destination = trip.getString("destination");
 
                 JSONObject time = root.getJSONObject("time");
+
+
+                // check if json has got hours key
+                //
                 String hours = time.getString("hours");
                 String mins = time.getString("mins");
 

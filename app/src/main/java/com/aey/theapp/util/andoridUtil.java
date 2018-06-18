@@ -114,4 +114,19 @@ public class andoridUtil {
 
 
 
+    public static void ParseGoogleDirectionFare(double estimate_fare , double Actual_fare) throws JSONException {
+
+
+        JSONObject json = new JSONObject();
+
+        json.put("estimate",estimate_fare);
+        json.put("actual",Actual_fare);
+
+
+        DirectionAPiJson.put("Fare",json);
+
+    }
+
+
+
 }

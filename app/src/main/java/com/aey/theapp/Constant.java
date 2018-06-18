@@ -5,7 +5,7 @@ public class Constant {
 
     // intent values
     public static final int REQUEST_SIGN_UP = 0;
-    public static final int LOCATION_REQUEST_INTERVAL = 60000 ;  // 60  sec
+    public static final int LOCATION_REQUEST_INTERVAL = 30000 ;  // 30  sec
     public static final double FAREPerMin= 0.3 ;
     public static final double fAREPerKM = 2.0 ;
 
