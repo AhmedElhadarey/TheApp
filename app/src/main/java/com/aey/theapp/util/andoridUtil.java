@@ -98,4 +98,20 @@ public class andoridUtil {
         return Time;
     }
 
+
+    public static void ParseGoogleDirectionTrip(String origin , String destination ,String TimeDate) throws JSONException {
+
+
+        JSONObject json = new JSONObject();
+
+        json.put("origin",origin);
+        json.put("destination",destination);
+        json.put("Date",TimeDate);
+
+        DirectionAPiJson.put("Trip",json);
+
+    }
+
+
+
 }

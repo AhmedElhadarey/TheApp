@@ -213,16 +213,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String TripDetails = directionHandler.getEndLocationTitle();
 
         // display trip details to user
-        try {
-            showTripDetails(TripDetails);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+
+        showTripDetails(TripDetails);
+
         Log.d(TAG, "[showDirection] Trip results   " + TripDetails);
 
     }
 
-    private void showTripDetails(String TripDetails) throws JSONException {
+
+    private void showTripDetails(String TripDetails) {
 
 
         try {
@@ -253,14 +252,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             double estimateFare = Math.ceil(fareHandler.estimateTripCoste(TripDistance, TripTime));
             double actualFare = Math.ceil(fareHandler.CalculateActualCost(TripDistance));
 
-
             Log.d(TAG, "[showTripDetails] Trip fare  (google) " + estimateFare);
             Log.d(TAG, "[showTripDetails] Trip fare (Actual)  " + actualFare);
 
-
             // pass value to ui
-
             Log.d(TAG, "[showTripDetails] Trip json  " + DirectionAPiJson.toString());
+
+
         } catch (Exception e) {
             e.printStackTrace();
         }
