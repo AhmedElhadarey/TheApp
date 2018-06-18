@@ -42,12 +42,13 @@ public class DirectionApiHandler {
 
     public DirectionApiHandler(String API_KEY) {
 
-
+        // setup google direction api context , from june 2018 now Direction api only work if
+        // you provide a valid api key
         GeoContext = new GeoApiContext.Builder()
                 .apiKey(API_KEY)
                 .build();
-
-
+        // array list of all valid point form origin point to destination point
+        // used to draw aline from origin to destination display available road in egypt
         Direction_polylines = new ArrayList();
 
 
@@ -56,29 +57,34 @@ public class DirectionApiHandler {
 
     public boolean RequestDirection(Location origin_location, Location Destination_location) {
 
-
+        // convert Location object to comma seprated string of Lat , Long
         String origin = String.valueOf(origin_location.getLatitude()) + "," + origin_location.getLongitude();
 
 
         String destination = String.valueOf(Destination_location.getLatitude()) + "," + Destination_location.getLongitude();
 
-
+        // initialize request to google api using HTTP oki  (see google service docs )
          req = DirectionsApi.getDirections(GeoContext, origin, destination);
 
         try {
-
+            // attempt to invoke google time service
             DateTime now = new DateTime();
 
+            // attempt actual google api request
             directionsResult = req.departureTime(now)
                     .await();
 
             Log.d(TAG, "[RequestDirection] res.routes.length  " + directionsResult.routes.length);
 
+            // if no available routes to origin -- destination  return false
 
             if (directionsResult.routes != null && directionsResult.routes.length > 0) {
+
+                // select first road (it should be the fastest road available )
                 DirectionsRoute route = directionsResult.routes[0];
 
 
+                // decode polyline to points to add on map
                 if (route.legs != null) {
                     for (int i = 0; i < route.legs.length; i++) {
                         DirectionsLeg leg = route.legs[i];
@@ -126,19 +132,21 @@ public class DirectionApiHandler {
 
     public void addMarkersToMap(GoogleMap mMap) {
 
-        PolylineOptions opts = new PolylineOptions().addAll(Direction_polylines).color(Color.BLACK).width(12);
+        // add available polylines on google map
+        PolylineOptions opts = new PolylineOptions().addAll(Direction_polylines).color(Color.BLACK).width(10);
         mMap.addPolyline(opts);
 
-
+        // add option for users to zoom in/ out map
         mMap.getUiSettings().setZoomControlsEnabled(true);
+        // remove traffic option if set
         mMap.setTrafficEnabled(false);
 
-
+        // add mark for origin location with default mark
         mMap.addMarker(new MarkerOptions()
                 .position(new LatLng(directionsResult.routes[0].legs[0].startLocation.lat, directionsResult.routes[0].legs[0].startLocation.lng))
                 .title(directionsResult.routes[0].legs[0].startAddress));
 
-
+        // add mark for destination location with drawable icon
         mMap.addMarker(new MarkerOptions()
                 .position(new LatLng(directionsResult.routes[0].legs[0].endLocation.lat, directionsResult.routes[0].legs[0].endLocation.lng))
                 .title(directionsResult.routes[0].legs[0].startAddress)
@@ -148,7 +156,7 @@ public class DirectionApiHandler {
     public String getEndLocationTitle()
 
     {
-
+        // return Trip details time|distance
         return directionsResult.routes[0].legs[0].duration.humanReadable +
 
                 "|" + directionsResult.routes[0].legs[0].distance.humanReadable;

@@ -15,10 +15,10 @@
     <string name="user_name_validation_error">please enter valid name . i.e enter name with at least 3 chars</string>
     <string name="password_validation_error">please enter valid password . i.e password between should be more than 6 chars</string>
     <string name="Login_failure_message">Login failed</string>
-    <string name="login_progress_message">Authenticating...</string>
+    <string name="login_progress_message">Authenticating…</string>
     <string name="title_activity_maps">Map</string>
-    <string name="stop_btn_message">STOP</string>
-    <string name="start_btn_message">START</string>
+    <string name="stop_btn_message">END TRIP</string>
+    <string name="start_btn_message">START TRIP</string>
     <string name="trip_info_message">Getting trip information</string>
     <string name="google_api_key_">AIzaSyB62z1VNoa6TjBuPHdKzzbAr8n5GfSfhD4</string>
 

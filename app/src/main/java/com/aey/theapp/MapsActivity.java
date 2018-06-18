@@ -24,7 +24,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 
 import butterknife.BindView;
@@ -90,7 +89,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+
+        // extract available map object
         mMap = googleMap;
+
+        // setup location request to
+        // ask for location every : LOCATION_REQUEST_INTERVAL (set interval)
+        // setInterval(long) means - set the interval in which you want to get locations.
+        // setFastestInterval(long) means if a location is available sooner you can get it
+        // (i.e. another app is using the location services).
 
 
         mLocationRequest = new LocationRequest();
@@ -98,6 +105,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mLocationRequest.setFastestInterval(LOCATION_REQUEST_INTERVAL);
 
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        // Permission plaplapla
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
@@ -108,23 +117,36 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
 
+        // assign callback to receive updated location on
         mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
-        mMap.setMyLocationEnabled(true);
-        mMap.setTrafficEnabled(true);
 
+        // let the map draw the blue circle for your location
+        mMap.setMyLocationEnabled(true);
+        // enable road traffic on map
+        mMap.setTrafficEnabled(true);
 
     }
 
 
+
+
+
     @OnClick(R.id.btn_start)
-    public void start() {
+    public void TripBtnController() {
+
+        // check if app in not on a trip change btn text to stop and start tip
         if (!isInTrip) {
-            mMap.addMarker(new MarkerOptions().position(new LatLng(startLocation.getLatitude(), startLocation.getLongitude())).title("Start location"));
+
             startBtn.setText(R.string.stop_btn_message);
-            Log.d(TAG, "[start] start location: " + startLocation);
+            Log.d(TAG, "[TripBtnController] TripBtnController location: " + startLocation);
             isInTrip = true;
+
+            // TODO : Getting Trip time
+
+
         } else {
-            // end
+
+            // show fake progress :D :D to get trip info
 
 
             final ProgressDialog progressDialog = new ProgressDialog(MapsActivity.this,
@@ -140,25 +162,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                     new Runnable() {
                         public void run() {
+
+                            // set end location to last know location as location gets updated every
+                            // LOCATION_REQUEST_INTERVAL
                             endLocation = mLastLocation;
-
-
-
-
-                            Log.d(TAG, "[End] distance: " + startLocation.distanceTo(endLocation));
-
+                            // set Btn text to START again
                             startBtn.setText(R.string.start_btn_message);
                             isInTrip = false;
 
-
+                            // draw road line on map
                             showDirection();
 
-
+                            // cancel fake progress
                             progressDialog.dismiss();
 
 
                         }
-                    }, 1000);
+                    }, 2000);
 
 
         }
@@ -168,22 +188,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void showDirection() {
 
-
+        // create object from our direction api handler
         DirectionApiHandler directionHandler = new DirectionApiHandler(getString(R.string.google_api_key_));
 
+        // if failed to get road handle error request
         if (!directionHandler.RequestDirection(startLocation, endLocation)) {
 
             // TODO: handle failure request
             return;
         }
 
-
+        // add marker to origin point and destination point
         directionHandler.addMarkersToMap(mMap);
 
+        // retrieve trip details  time -- distance
         String TripDetails = directionHandler.getEndLocationTitle();
 
+        // display trip details to user
         showTripDetails(TripDetails);
-        Log.d(TAG, "[showDirection] Trip results   ");
+        Log.d(TAG, "[showDirection] Trip results   " + TripDetails );
 
     }
 
