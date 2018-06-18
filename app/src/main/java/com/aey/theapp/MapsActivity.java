@@ -9,12 +9,14 @@ import android.os.Looper;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
 import com.aey.theapp.util.DirectionApiHandler;
+import com.aey.theapp.util.FareHandler;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
@@ -26,11 +28,17 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
 
+import org.joda.time.DateTime;
+import org.json.JSONException;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static com.aey.theapp.Constant.LOCATION_REQUEST_INTERVAL;
+import static com.aey.theapp.util.andoridUtil.DirectionAPiJson;
+import static com.aey.theapp.util.andoridUtil.ParseGoogleDirectionDistance;
+import static com.aey.theapp.util.andoridUtil.ParseGoogleDirectionTime;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -47,6 +55,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Location endLocation;
 
     private boolean isInTrip;
+
+    FareHandler fareHandler;
 
     @BindView(R.id.btn_start)
     Button startBtn;
@@ -68,6 +78,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
         }
+
+        fareHandler = new FareHandler();
     }
 
     com.google.android.gms.location.LocationCallback mLocationCallback = new com.google.android.gms.location.LocationCallback() {
@@ -128,9 +140,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-
-
-
     @OnClick(R.id.btn_start)
     public void TripBtnController() {
 
@@ -140,7 +149,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             startBtn.setText(R.string.stop_btn_message);
             Log.d(TAG, "[TripBtnController] TripBtnController location: " + startLocation);
             isInTrip = true;
-
+            DateTime now = new DateTime();
+            fareHandler.setStartTime(now.getMillis());
             // TODO : Getting Trip time
 
 
@@ -176,7 +186,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             // cancel fake progress
                             progressDialog.dismiss();
 
-
                         }
                     }, 2000);
 
@@ -205,14 +214,59 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String TripDetails = directionHandler.getEndLocationTitle();
 
         // display trip details to user
-        showTripDetails(TripDetails);
-        Log.d(TAG, "[showDirection] Trip results   " + TripDetails );
+        try {
+            showTripDetails(TripDetails);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Log.d(TAG, "[showDirection] Trip results   " + TripDetails);
 
     }
 
 
-    private void showTripDetails(String TripDetails) {
-        // ToDo : navigate to billing fragment with trip details
+    private void showTripDetails(String TripDetails) throws JSONException {
+
+
+        try {
+            Log.d(TAG, "[showTripDetails] starting ");
+
+
+            // ToDo : navigate to billing fragment with trip details
+
+            DateTime now = new DateTime();
+            fareHandler.setEndTime(now.getMillis());
+
+            Log.d(TAG, "[showTripDetails] Trip End Time  " + now.getMillis());
+
+
+            String[] TripDetalisList = TripDetails.split(",");
+            double TripTime = 0, TripDistance = 0;
+            if (TripDetalisList != null) {
+
+
+                TripTime = ParseGoogleDirectionTime(TripDetalisList[0]);
+                TripDistance = ParseGoogleDirectionDistance(TripDetalisList[1]);
+            }
+
+            Log.d(TAG, "[showTripDetails] Trip Time  (google) " + TripTime);
+            Log.d(TAG, "[showTripDetails] Trip distance  (google) " + TripDistance);
+
+
+            double estimateFare = Math.ceil(fareHandler.estimateTripCoste(TripDistance, TripTime));
+            double actualFare = Math.ceil(fareHandler.CalculateActualCost(TripDistance));
+
+
+            Log.d(TAG, "[showTripDetails] Trip fare  (google) " + estimateFare);
+            Log.d(TAG, "[showTripDetails] Trip fare (Actual)  " + actualFare);
+
+
+            // pass value to ui
+
+            Log.d(TAG, "[showTripDetails] Trip json  " + DirectionAPiJson.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void checkLocationPermission() {

@@ -21,9 +21,7 @@
     <string name="start_btn_message">START TRIP</string>
     <string name="trip_info_message">Getting trip information</string>
     <string name="google_api_key_">AIzaSyB62z1VNoa6TjBuPHdKzzbAr8n5GfSfhD4</string>
-
-
-
+    <string name="trip_title_hint">Your Trip</string>
 
 
 </resources>

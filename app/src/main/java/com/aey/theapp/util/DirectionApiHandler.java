@@ -6,6 +6,7 @@ import android.location.Location;
 import android.util.Log;
 
 import com.aey.theapp.R;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -61,10 +62,12 @@ public class DirectionApiHandler {
         String origin = String.valueOf(origin_location.getLatitude()) + "," + origin_location.getLongitude();
 
 
-        String destination = String.valueOf(Destination_location.getLatitude()) + "," + Destination_location.getLongitude();
+        // String destination = String.valueOf(Destination_location.getLatitude()) + "," + Destination_location.getLongitude();
+
+        String destination = "30.228341,31.479895";
 
         // initialize request to google api using HTTP oki  (see google service docs )
-         req = DirectionsApi.getDirections(GeoContext, origin, destination);
+        req = DirectionsApi.getDirections(GeoContext, origin, destination);
 
         try {
             // attempt to invoke google time service
@@ -128,8 +131,6 @@ public class DirectionApiHandler {
     }
 
 
-
-
     public void addMarkersToMap(GoogleMap mMap) {
 
         // add available polylines on google map
@@ -151,15 +152,26 @@ public class DirectionApiHandler {
                 .position(new LatLng(directionsResult.routes[0].legs[0].endLocation.lat, directionsResult.routes[0].legs[0].endLocation.lng))
                 .title(directionsResult.routes[0].legs[0].startAddress)
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_dest_marker)));
+
+        double v1 = Direction_polylines.get(Direction_polylines.size() / 2).latitude;
+
+        double v2 = Direction_polylines.get(Direction_polylines.size() / 2).longitude;
+
+
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(v1, v2)));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(10));
+
     }
 
     public String getEndLocationTitle()
+
 
     {
         // return Trip details time|distance
         return directionsResult.routes[0].legs[0].duration.humanReadable +
 
-                "|" + directionsResult.routes[0].legs[0].distance.humanReadable;
+                "," + directionsResult.routes[0].legs[0].distance.humanReadable;
     }
 
 
