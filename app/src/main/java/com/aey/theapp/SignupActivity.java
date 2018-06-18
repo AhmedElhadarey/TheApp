@@ -102,7 +102,7 @@ public class SignupActivity extends AppCompatActivity {
 
         // TODO: Implement your own signup logic here.
 
-        createAccount(email, password);
+        createAccount(email, password,name);
         progressDialog.dismiss();
 
     }
@@ -152,7 +152,7 @@ public class SignupActivity extends AppCompatActivity {
     }
 
 
-    private void createAccount(String email, String password) {
+    private void createAccount(String email, String password , final String name) {
 
         firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(SignupActivity.this, new OnCompleteListener<AuthResult>() {
             @Override
@@ -165,6 +165,7 @@ public class SignupActivity extends AppCompatActivity {
                     String user_id = firebaseAuth.getCurrentUser().getUid();
                     DatabaseReference current_user_db = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(user_id);
                     current_user_db.setValue(true);
+                    current_user_db.setValue("Name" ,name);
                     onSignupSuccess();
                 }
             }

@@ -1,6 +1,5 @@
 package com.aey.theapp;
 
-import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
@@ -29,7 +28,6 @@ import com.google.android.gms.maps.model.LatLng;
 
 
 import org.joda.time.DateTime;
-import org.json.JSONException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -263,15 +261,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Log.d(TAG, "[showTripDetails] Trip json  " + DirectionAPiJson.toString());
 
 
-
             new android.os.Handler().postDelayed(new Runnable() {
                 public void run() {
-
-
                     mMap.clear();
                 }}
                 ,2000);
-
 
 
 

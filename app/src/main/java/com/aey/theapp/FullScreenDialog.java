@@ -3,6 +3,7 @@ package com.aey.theapp;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +20,7 @@ public class FullScreenDialog extends DialogFragment {
 
     public static final String TAG = "FullScreenDialog";
 
-    private String jsonResponse;
+    private JSONObject jsonResponse;
 
     @BindView(R.id.tv_date)
     TextView dateTv;
@@ -54,15 +55,14 @@ public class FullScreenDialog extends DialogFragment {
     }
 
     private void viewData() {
-        if (jsonResponse != null && !jsonResponse.isEmpty()) {
+        if (jsonResponse != null) {
             try {
-                JSONObject root = new JSONObject(jsonResponse);
-                JSONObject trip = root.getJSONObject("trip");
+                JSONObject trip = jsonResponse.getJSONObject("trip");
                 String date = trip.getString("date");
                 String origin = trip.getString("origin");
                 String destination = trip.getString("destination");
 
-                JSONObject time = root.getJSONObject("time");
+                JSONObject time = jsonResponse.getJSONObject("time");
 
 
                 // check if json has got hours key
@@ -70,7 +70,7 @@ public class FullScreenDialog extends DialogFragment {
                 String hours = time.getString("hours");
                 String mins = time.getString("mins");
 
-                JSONObject distance = root.getJSONObject("distance");
+                JSONObject distance = jsonResponse.getJSONObject("distance");
                 String km = distance.getString("km");
 
                 dateTv.setText(date);
@@ -98,7 +98,8 @@ public class FullScreenDialog extends DialogFragment {
         this.dismiss();
     }
 
-    public void setJsonResponse(String jsonResponse) {
+    public void setJsonResponse(JSONObject jsonResponse) {
         this.jsonResponse = jsonResponse;
     }
+
 }
