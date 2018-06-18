@@ -23,9 +23,12 @@ import com.google.maps.model.DirectionsStep;
 import com.google.maps.model.EncodedPolyline;
 
 import org.joda.time.DateTime;
+import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.aey.theapp.util.andoridUtil.ParseGoogleDirectionTrip;
 
 public class DirectionApiHandler {
 
@@ -150,7 +153,7 @@ public class DirectionApiHandler {
         // add mark for destination location with drawable icon
         mMap.addMarker(new MarkerOptions()
                 .position(new LatLng(directionsResult.routes[0].legs[0].endLocation.lat, directionsResult.routes[0].legs[0].endLocation.lng))
-                .title(directionsResult.routes[0].legs[0].startAddress)
+                .title(directionsResult.routes[0].legs[0].endAddress)
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_dest_marker)));
 
         double v1 = Direction_polylines.get(Direction_polylines.size() / 2).latitude;
@@ -158,9 +161,18 @@ public class DirectionApiHandler {
         double v2 = Direction_polylines.get(Direction_polylines.size() / 2).longitude;
 
 
-
         mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(v1, v2)));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(10));
+
+
+        try {
+            ParseGoogleDirectionTrip(directionsResult.routes[0].legs[0].startAddress,
+                    directionsResult.routes[0].legs[0].endAddress,
+                    new DateTime().toString("dd-MM-yyyy"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
 
     }
 
