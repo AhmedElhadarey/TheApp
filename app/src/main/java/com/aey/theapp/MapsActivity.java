@@ -10,11 +10,11 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.aey.theapp.util.DirectionApiHandler;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
@@ -30,6 +30,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static com.aey.theapp.Constant.LOCATION_REQUEST_INTERVAL;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -92,8 +94,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
         mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(1000);
-        mLocationRequest.setFastestInterval(1000);
+        mLocationRequest.setInterval(LOCATION_REQUEST_INTERVAL);
+        mLocationRequest.setFastestInterval(LOCATION_REQUEST_INTERVAL);
 
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
@@ -117,7 +119,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @OnClick(R.id.btn_start)
     public void start() {
         if (!isInTrip) {
-            mMap.addMarker(new MarkerOptions().position(new LatLng(startLocation.getLatitude(), startLocation.getLongitude())).title("Current location"));
+            mMap.addMarker(new MarkerOptions().position(new LatLng(startLocation.getLatitude(), startLocation.getLongitude())).title("Start location"));
             startBtn.setText(R.string.stop_btn_message);
             Log.d(TAG, "[start] start location: " + startLocation);
             isInTrip = true;
@@ -141,18 +143,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             endLocation = mLastLocation;
 
 
-                            LatLng latLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
 
-                            Log.d(TAG, "[End] end location: " + endLocation);
+
                             Log.d(TAG, "[End] distance: " + startLocation.distanceTo(endLocation));
 
                             startBtn.setText(R.string.start_btn_message);
                             isInTrip = false;
 
-                            mMap.addMarker(new MarkerOptions().position(latLng).title("End location"));
+
+                            showDirection();
 
 
                             progressDialog.dismiss();
+
 
                         }
                     }, 1000);
@@ -163,19 +166,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-    private void showTripDetails() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Trip Details");
-        String sbMessage = "Start Location: " +
-                startLocation.getLongitude() + ", " + startLocation.getLatitude() +
-                "\n" +
-                "End Location: " +
-                endLocation.getLongitude() + ", " + endLocation.getLatitude() +
-                "\n" +
-                "Distance: " +
-                startLocation.distanceTo(endLocation);
-        builder.setMessage(sbMessage);
-        builder.create().show();
+    private void showDirection() {
+
+
+        DirectionApiHandler directionHandler = new DirectionApiHandler(getString(R.string.google_api_key_));
+
+        if (!directionHandler.RequestDirection(startLocation, endLocation)) {
+
+            // TODO: handle failure request
+            return;
+        }
+
+
+        directionHandler.addMarkersToMap(mMap);
+
+        String TripDetails = directionHandler.getEndLocationTitle();
+
+        showTripDetails(TripDetails);
+        Log.d(TAG, "[showDirection] Trip results   ");
+
+    }
+
+
+    private void showTripDetails(String TripDetails) {
+        // ToDo : navigate to billing fragment with trip details
     }
 
     private void checkLocationPermission() {

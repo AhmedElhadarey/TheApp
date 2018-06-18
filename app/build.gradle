@@ -33,6 +33,10 @@ dependencies {
     implementation 'com.google.android.gms:play-services:11.8.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 
+    implementation 'com.google.maps:google-maps-services:0.2.7'
+    implementation 'org.slf4j:slf4j-nop:1.7.25'
+
+
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'

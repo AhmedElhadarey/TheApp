@@ -20,6 +20,9 @@
     <string name="stop_btn_message">STOP</string>
     <string name="start_btn_message">START</string>
     <string name="trip_info_message">Getting trip information</string>
+    <string name="google_api_key_">AIzaSyB62z1VNoa6TjBuPHdKzzbAr8n5GfSfhD4</string>
+
+
 
 
 
